@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: teams-bot-datahub-agent
+    runtime: node
+    plan: starter
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # Render routes public traffic to PORT. The alert API listens there and
+      # forwards /api/messages to the bot server on BOT_PORT.
+      - key: PORT
+        value: "10000"
+      - key: API_PORT
+        value: "10000"
+      - key: BOT_PORT
+        value: "3978"
+      - key: BOT_TYPE
+        value: SingleTenant
+      # Secrets: set these in the Render dashboard.
+      - key: CLIENT_ID
+        sync: false
+      - key: CLIENT_SECRET
+        sync: false
+      - key: TENANT_ID
+        sync: false
+      - key: TEAMS_APP_ID
+        sync: false
+      - key: BOOMI_BASE_URL
+        sync: false
+      - key: BOOMI_AUTH
+        sync: false
+      - key: BOOMI_DEPLOYMENT_ID
+        sync: false
+      - key: DATAHUB_CHAT_URL
+        sync: false
+      - key: ALERT_API_KEY
+        sync: false

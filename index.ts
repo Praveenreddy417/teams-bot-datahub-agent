@@ -40,7 +40,7 @@ function missingFieldsForType(body: AlertPayload): string[] {
   });
 }
 
-const BOT_PORT = parseInt(process.env.PORT ?? "3978", 10);
+const BOT_PORT = parseInt(process.env.BOT_PORT ?? process.env.PORT ?? "3978", 10);
 const API_PORT = parseInt(process.env.API_PORT ?? "3979", 10);
 
 // ── Token acquisition ─────────────────────────────────────────────────────────
@@ -123,6 +123,24 @@ function readBody(req: http.IncomingMessage): Promise<unknown> {
 const apiServer = http.createServer(async (req, res) => {
   const url = (req.url ?? "/").split("?")[0];
   const method = req.method ?? "GET";
+
+  // ── Forward Bot Framework traffic to the bot server (single public port hosts, e.g. Render) ──
+  if (url === "/api/messages" && BOT_PORT !== API_PORT) {
+    const upstream = http.request(
+      { host: "127.0.0.1", port: BOT_PORT, path: req.url, method, headers: req.headers },
+      (botRes) => {
+        res.writeHead(botRes.statusCode ?? 502, botRes.headers);
+        botRes.pipe(res);
+      }
+    );
+    upstream.on("error", (err) => {
+      console.error("❌ Bot proxy error:", err.message);
+      if (!res.headersSent) res.writeHead(502);
+      res.end();
+    });
+    req.pipe(upstream);
+    return;
+  }
 
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Access-Control-Allow-Origin", "*");
