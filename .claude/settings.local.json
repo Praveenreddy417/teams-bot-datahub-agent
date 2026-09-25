@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist)",
+      "Bash(curl -sv \"http://localhost:3978/api/integrations/charts/test.svg\")",
+      "Bash(devtunnel list *)",
+      "Bash(devtunnel show *)",
+      "Bash(curl -sv \"https://rvfm190p-3978.inc1.devtunnels.ms/api/messages\")",
+      "Bash(curl -sv \"http://localhost:3978/api/messages\")",
+      "Bash(npx tsc *)"
+    ]
+  }
+}
