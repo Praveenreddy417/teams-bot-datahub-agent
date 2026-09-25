@@ -20,3 +20,7 @@ dist/
 
 # Dev tool directories
 /devTools/
+# Secrets / runtime data
+env/.env.dev
+conversationStore.json
+.claude/settings.local.json
